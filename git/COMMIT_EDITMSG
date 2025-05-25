@@ -1,0 +1,13 @@
+Assistant checkpoint: Remove moderator credentials from login page
+
+Assistant generated file changes:
+- templates/login.html: Remove moderator credentials display
+
+---
+
+User prompt:
+
+Boeee per no lo muestres en inicio de sesion
+
+Replit-Commit-Author: Assistant
+Replit-Commit-Session-Id: 438dad5f-fe7f-426e-907e-2918b395bc69
