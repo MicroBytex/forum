@@ -1,0 +1,84 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Foro Chido{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="post-card">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h1>{{ post.title }}</h1>
+                    <small class="text-muted">
+                        Por <strong>{{ post.username }}</strong> • {{ post.created_at }}
+                    </small>
+                </div>
+                {% if session.role == 'moderator' %}
+                    <a href="{{ url_for('delete_post', post_id=post.id) }}" 
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Estás seguro de eliminar este post?')">
+                        🗑️ Eliminar Post
+                    </a>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <p style="white-space: pre-wrap;">{{ post.content }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>💬 Comentarios ({{ comments|length }})</h3>
+            
+            {% if session.user_id %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="content" rows="3" placeholder="Escribe tu comentario..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">💬 Comentar</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <a href="{{ url_for('login') }}">Inicia sesión</a> para comentar
+                </div>
+            {% endif %}
+
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <p style="white-space: pre-wrap;">{{ comment.content }}</p>
+                                    <small class="text-muted">
+                                        Por <strong>{{ comment.username }}</strong> • {{ comment.created_at }}
+                                    </small>
+                                </div>
+                                {% if session.role == 'moderator' %}
+                                    <a href="{{ url_for('delete_comment', comment_id=comment.id, post_id=post.id) }}" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('¿Estás seguro de eliminar este comentario?')">
+                                        🗑️
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">← Volver al foro</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

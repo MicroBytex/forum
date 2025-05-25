@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="display-4">💬 Foro Principal</h1>
+            {% if session.user_id %}
+                <a href="{{ url_for('new_post') }}" class="btn btn-primary btn-lg">
+                    ✨ Crear Nuevo Post
+                </a>
+            {% endif %}
+        </div>
+
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h3><a href="{{ url_for('view_post', post_id=post.id) }}" class="text-decoration-none">{{ post.title }}</a></h3>
+                            <p class="text-muted mb-2">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+                            <small class="text-muted">
+                                Por <strong>{{ post.username }}</strong> • {{ post.created_at }}
+                            </small>
+                        </div>
+                        {% if session.role == 'moderator' %}
+                            <div class="ms-3">
+                                <a href="{{ url_for('delete_post', post_id=post.id) }}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Estás seguro de eliminar este post?')">
+                                    🗑️ Eliminar
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <h3>😔 No hay posts aún</h3>
+                <p class="text-muted">¡Sé el primero en crear uno!</p>
+                {% if session.user_id %}
+                    <a href="{{ url_for('new_post') }}" class="btn btn-primary">Crear el primer post</a>
+                {% else %}
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Regístrate para comenzar</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
